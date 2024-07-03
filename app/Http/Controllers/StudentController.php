@@ -6,6 +6,7 @@ use App\Models\Grade;
 use App\Models\Student;
 use App\Models\Year;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -44,7 +45,7 @@ class StudentController extends Controller
         $request->validate([
             'code' => 'required|digits:10', // Validasi 10 angka
             'name' => 'required|string|max:255',
-            'gender' => 'required|string|in:male,female',
+            'gender' => 'required|string|in:Laki-laki,Perempuan',
             'grade_id' => 'required|exists:grades,id',
             'year_id' => 'required|exists:years,id',
         ]);
@@ -54,7 +55,7 @@ class StudentController extends Controller
 
         return redirect(route('student.view'))->with('success', 'Data user berhasil ditambahkan');
     }
-    public function viewEdit(Student $student,Grade $grade, Year $year)
+    public function viewEdit(Student $student,Grade $grade, Year $year, Request $request)
     {
         $request->validate([
             'code' => 'required|digits:10', // Validasi 10 angka

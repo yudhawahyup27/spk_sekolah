@@ -22,6 +22,9 @@
                 </div>
                 <button class="btn btn-primary w-100">Hitung</button>
             </form>
+            @foreach ($dataToCalculate as $dt)
+                {{ $dt['name'] }}
+            @endforeach
         </div>
     </div>
 

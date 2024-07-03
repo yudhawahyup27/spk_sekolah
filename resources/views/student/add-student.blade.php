@@ -8,12 +8,21 @@
         </div>
 
         <div class="card card-body">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form action="{{ route('student.add') }}" method="POST" id="form">
                 @csrf
                 <div class="row">
                     <div class="col-lg-12 col-12 mb-2">
                         <label class="form-label">NISN <sup class="text-danger">*</sup></label>
-                        <input type="number" class="form-control desimal-input" id="nisn" name="code"required>
+                        <input type="number" class="form-control desimal-input" id="nisn" name="code" required>
                         <div id="validationServerUsernameFeedback" class="invalid-feedback">
                             NISN tidak valid!. Pastikan NISN terdiri dari angka yang memiliki panjang 10 karakter.
                         </div>
@@ -26,7 +35,7 @@
                         <label class="form-label">Jenis Kelamin <sup class="text-danger">*</sup></label>
                         <select name="gender" class="form-select" id="inputGroupSelect01">
                             <option selected>Choose...</option>
-                            <option value="Laki-Laki">Laki-Laki</option>
+                            <option value="Laki-laki">Laki-Laki</option>
                             <option value="Perempuan">Perempuan</option>
                         </select>
                     </div>

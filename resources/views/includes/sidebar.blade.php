@@ -57,13 +57,13 @@
 
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
-        <li class="menu-item @if (Route::is('dashboard.view')) active @endif">
-            <a href="{{ route('dashboard.view') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Dashboard</div>
-            </a>
-        </li>
         @if(Auth::user()->role == 1)
+            <li class="menu-item @if (Route::is('dashboard.view')) active @endif">
+                <a href="{{ route('dashboard.view') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                    <div data-i18n="Analytics">Dashboard</div>
+                </a>
+            </li>
             <li class="menu-item @if (Route::is('group.view') || Route::is('group.viewAddGroup') || Route::is('group.viewEditGroup')) active @endif">
                 <a href="{{ route('group.view') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bxs-label"></i>
@@ -97,8 +97,8 @@
             </li>
         @endif
 
-        <li class="menu-item ">
-            <a href="{{ route('rating.view') }}" class="menu-link">
+        <li class="menu-item @if (Route::is('calculate.view') || Route::is('calculate.calculate')) active @endif">
+            <a href="{{ route('calculate.view') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bxs-calculator"></i>
                 <div data-i18n="Analytics">Perhitungan</div>
             </a>

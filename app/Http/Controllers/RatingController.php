@@ -8,13 +8,24 @@ use App\Models\Rating;
 use App\Models\Student;
 use App\Models\SubCriteria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class RatingController extends Controller
 {
     public function view()
-    {   $studentData=Student::get();
+    {   
+        $kelas = Auth::user()->grade_id;
+        $studentData=Student::get();
         $candidateData = Candidate::with('rating.subCriteria')->get();
+        if (Auth::user()->role !== 1){
+            $studentData=Student::where('grade_id', $kelas)->get();
+            $candidateData = Candidate::with(['rating.subCriteria', 'student'])
+                            ->whereHas('student', function($query) use ($kelas) {
+                                $query->where('grade_id', $kelas);
+                            })
+                            ->get();
+        }
         $criteriaData = Criteria::with('subCriteria')->get();
         $subCriteriaData = SubCriteria::all();
 

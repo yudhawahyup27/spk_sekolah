@@ -12,6 +12,11 @@ class DashboardController extends Controller
     public function view(User $user)
     {
         $userData = User::With(['grade'])->get();
+
+        if (Auth::user()->role !== 1) {
+            return redirect()->intended('/rating');
+        }
+
         return view('dashboard.dashboard', compact('userData'));
     }
     public function viewAdd(Grade $grade)
@@ -57,7 +62,11 @@ class DashboardController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/');
+            if (Auth::user()->role !== 1) {
+                return redirect()->intended('/rating');
+            } else {
+                return redirect()->intended('/');
+            }
         }
 
 

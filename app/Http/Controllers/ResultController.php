@@ -7,29 +7,54 @@ use App\Models\Criteria;
 use App\Models\Rating;
 use App\Models\hasil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ResultController extends Controller
 {
     public function calculateView(Request $request)
     {
+        $kelas = Auth::user()->grade_id;
         $isCalculate = false;
+
         $dataToCalculate = DB::table('ratings')
             ->join('candidates', 'ratings.candidate_id', '=', 'candidates.id')
             ->join('sub_criteria', 'ratings.sub_criteria_id', '=', 'sub_criteria.id')
             ->join('students', 'candidates.student_id', '=', 'students.id')
             ->select('ratings.*', 'candidates.*', 'sub_criteria.*', 'sub_criteria.name as criteria_name', 'students.*')
+            ->orderBy('candidates.id', 'asc')->orderBy('sub_criteria.criteria_id')
             ->get();
+        if (Auth::user()->role !== 1){
+            $dataToCalculate = DB::table('ratings')
+                ->join('candidates', 'ratings.candidate_id', '=', 'candidates.id')
+                ->join('sub_criteria', 'ratings.sub_criteria_id', '=', 'sub_criteria.id')
+                ->join('students', 'candidates.student_id', '=', 'students.id')
+                ->select('ratings.*', 'candidates.*', 'sub_criteria.*', 'sub_criteria.name as criteria_name', 'students.*')
+                ->where('students.grade_id', $kelas)
+                ->orderBy('candidates.id', 'asc')->orderBy('sub_criteria.criteria_id')
+                ->get();
+        }
+        
+
+        $dataToCalculate = $dataToCalculate->groupBy('candidate_id');
 
         return view('calculates.calculate', compact('dataToCalculate', 'isCalculate'));
     }
 
     public function calculate(Request $request)
     {
+        $kelas = Auth::user()->grade_id;
         $data = [
             'criteria' => Criteria::all(),
-            'candidates' => Candidate::with('rating.subCriteria')->get(),
+            'candidates' => Candidate::with(['rating.subCriteria', 'student'])->get(),
         ];
+        if (Auth::user()->role !== 1) {
+            $data['candidates'] = Candidate::with(['rating.subCriteria', 'student'])
+                                ->whereHas('student', function($query) use ($kelas) {
+                                    $query->where('grade_id', $kelas);
+                                })
+                                ->get();
+        }
 
         $isCalculate = true;
 
@@ -74,7 +99,7 @@ class ResultController extends Controller
         // Normalize each candidate/alternative against criteria
         $normalizeCandidates = $candidates->map(function ($candidate) use ($min, $max) {
             return [
-                'name' => $candidate->name,
+                'name' => $candidate->student->name,
                 'candidate_id' => $candidate->id,
                 'normal' => $candidate->rating->map(function ($rating, $index) use ($min, $max) {
                     if (isset($max[$index]) && isset($min[$index])) {

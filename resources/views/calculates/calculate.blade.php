@@ -51,15 +51,47 @@
         @else
             <form method="POST" action="{{ route('calculate.process') }}">
                 @csrf
-                <div class="form-group">
-                    <label for="calculate_type">Calculation Type:</label>
-                    <select class="form-control" id="calculate_type" name="calculate_type">
-                        <option value="1">SAW</option>
-                        <option value="2">SMART</option>
-                    </select>
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group">
+                            <select class="form-control" id="calculate_type" name="calculate_type">
+                                <option value="1">SAW</option>
+                                <option value="2">SMART</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col"></div>
+                    <div class="col-3">
+                        <button type="submit" class=" float-end btn btn-primary">Calculate</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Calculate</button>
             </form>
+
+            <div class="mb-3"></div>
+
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Candidate Id</th>
+                        <th class="text-center">Candidate Name</th>
+                        <th class="text-center">Nilai Akademik (C1)</th>
+                        <th class="text-center">Nilai Ekstrakulikuler(C2)</th>
+                        <th class="text-center">Prestasi (C3)</th>
+                        <th class="text-center">Absen Kehadiran (C4)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($dataToCalculate as $dt)
+                        <tr>
+                            <td class="text-center">{{ $dt[0]->candidate_id}}</td>
+                            <td class="text-center">{{ $dt[0]->name}}</td>
+                            @foreach ($dt as $d)
+                                <td class="text-center">{{ $d->value }} ({{ $d->criteria_name }})</td>
+                            @endforeach
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         @endif
     </div>
 @endsection
