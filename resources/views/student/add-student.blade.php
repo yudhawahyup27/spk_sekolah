@@ -67,7 +67,7 @@
     </div>
 
     <script>
-        $('#nisn').on('change', function () {
+        $('#nisn').on('keyup', function () {
             let value = $(this).val()
             if(value?.length !== 10){
                 $(this).addClass('is-invalid')

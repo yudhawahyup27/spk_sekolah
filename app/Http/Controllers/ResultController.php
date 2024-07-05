@@ -58,13 +58,13 @@ class ResultController extends Controller
 
         $isCalculate = true;
 
-        if ($request->calculate_type == 1) {
+        // if ($request->calculate_type == 1) {
             $result = $this->calculateWithSAW($data);
             $this->saveResults($result['ranking'], 1);
-        } else {
-            $result = $this->calculateWithSmart($data);
-            $this->saveResults($result['ranking'], 2);
-        }
+        // } else {
+        //     $result = $this->calculateWithSmart($data);
+        //     $this->saveResults($result['ranking'], 2);
+        // }
 
         return view('calculates.calculate', compact('isCalculate', 'data', 'result'));
     }
@@ -136,11 +136,74 @@ class ResultController extends Controller
         ];
     }
 
-    private function calculateWithSmart($data)
-    {
-        // Similar logic as calculateWithSAW but using a different method
-        // Adjust according to your application's needs
-    }
+    // private function calculateWithSmart($data)
+    // {
+    //     $criteria = $data['criteria'];
+    //     $candidates = $data['candidates'];
+
+    //     // Normalize criteria weights
+    //     $normalizeCrit = $criteria->map(function ($item) {
+    //         return $item->weight / 100;
+    //     });
+
+    //     // Calculate min-max values for each criterion per candidate
+    //     $critData = $candidates->flatMap(function ($candidate) {
+    //         return $candidate->rating->map(function ($rating) {
+    //             return $rating->subCriteria;
+    //         });
+    //     });
+
+    //     $groupCrit = $critData->groupBy('criteria_id');
+
+    //     $max = $groupCrit->map(function ($group) {
+    //         return $group->max('value');
+    //     })->values();
+
+    //     $min = $groupCrit->map(function ($group) {
+    //         return $group->min('value');
+    //     })->values();
+
+    //     // Normalize each candidate/alternative against criteria
+    //     $normalizeCandidates = $candidates->map(function ($candidate) use ($min, $max) {
+    //         return [
+    //             'name' => $candidate->student->name,
+    //             'candidate_id' => $candidate->id,
+    //             'normal' => $candidate->rating->map(function ($rating, $index) use ($min, $max) {
+    //                 if (isset($max[$index]) && isset($min[$index])) {
+    //                     return (($rating->subCriteria['value'] - $min[$index]) / ($max[$index] - $min[$index]));
+    //                 }
+    //                 return null;
+    //             })->filter(function ($value) {
+    //                 return !is_null($value);
+    //             })->values()
+    //         ];
+    //     });
+
+    //     // Calculate ranking of each candidate
+    //     $ranking = $normalizeCandidates->map(function ($candidate) use ($normalizeCrit) {
+    //         return [
+    //             'name' => $candidate['name'],
+    //             'candidate_id' => $candidate['candidate_id'],
+    //             'result' => $candidate['normal']->map(function ($normal, $index) use ($normalizeCrit) {
+    //                 return round($normal * $normalizeCrit[$index], 4);
+    //             })->sum()
+    //         ];
+    //     });
+
+    //     $sortedRanking = $ranking->sortByDesc('result')->values();
+
+    //     return [
+    //         'normalize_matrix' => $normalizeCandidates,
+    //         'ranking' => $sortedRanking->map(function ($item, $index) {
+    //             return [
+    //                 'name' => $item['name'],
+    //                 'candidates_id' => $item['candidate_id'],
+    //                 'rank' => $index + 1,
+    //                 'score' => $item['result']
+    //             ];
+    //         })
+    //     ];
+    // }
 
     private function saveResults($results, $category)
     {

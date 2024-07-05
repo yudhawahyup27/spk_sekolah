@@ -57,22 +57,21 @@ class StudentController extends Controller
     }
     public function viewEdit(Student $student,Grade $grade, Year $year, Request $request)
     {
-        $request->validate([
-            'code' => 'required|digits:10', // Validasi 10 angka
-            'name' => 'required|string|max:255',
-            'gender' => 'required|string|in:male,female',
-            'grade_id' => 'required|exists:grades,id',
-            'year_id' => 'required|exists:years,id',
-        ]);
 
         $gradeData = $grade->get();
         $yearData = $year->get();
         return view('student.edit-student', compact('student','gradeData', 'yearData'));
     }
-    public function edit(Student $student, Request $Request)
+    public function edit(Student $student, Request $request)
     {
-        $data = $Request->all();
-        $student->update($data);
+        $validatedData = $request->validate([
+            'code' => 'required|digits:10', // Validasi 10 angka
+            'name' => 'required|string|max:255',
+            'gender' => 'required|string|in:Laki-laki,Perempuan',
+            'grade_id' => 'required|exists:grades,id',
+            'year_id' => 'required|exists:years,id',
+        ]);
+        $student->update($validatedData);
         return redirect(route('student.view'))->with('success', 'Data user berhasil diubah');
     }
     public function delete(Student $student,)
