@@ -5,6 +5,21 @@
 @section('content')
     <div class="container">
         <h1>Hasil Perhitungan</h1>
+        <form action="{{ route('delete.tb_hasil') }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="filterYear" class="form-label">Select Year:</label>
+                    <select class="form-select" id="filterYear" name="year_id">
+                        @foreach($semester as $sem)
+                        <option value="{{ $sem->id }}">{{ $sem->semester }}</option>
+                    @endforeach
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-danger">Delete Records</button>
+        </form>
         <table id="result_table" class="display table table-bordered table-sm" style="width:100%">
             <thead class="bg-primary" style="color: white">
                 <tr>

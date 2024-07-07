@@ -54,7 +54,7 @@
         </div>
         <div class= "mt-2 ">
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Data Angkatan</h1>
+                <h1 class="h3 mb-0 text-gray-800">Data Semester</h1>
             </div>
 
             <div class="w-100 d-flex justify-content-lg-end justify-content-center mb-3">
@@ -65,29 +65,29 @@
             <div class="card mb-5">
                 <div class="card-header text-primary">
                     <i class="fa fa-table" aria-hidden="true"></i>
-                    Tabel Data Angkatan
+                    Tabel Data Semester
                 </div>
                 <div class="card-body table-responsive table-bordered">
                     <table class="table table-sm table-striped table-hover" id="year-table">
                         <thead class=" text-white">
                             <tr>
                                 <th class="text-center">No</th>
-                                <th class="text-center">Angkatan</th>
+                                <th class="text-center">Semester</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @php($i = 1)
-                            @foreach ($yearData as $year)
+                            @foreach ($semester as $semester)
                                 <tr>
                                     <td class="text-center">{{ $i++ }}</td>
-                                    <td class="text-center">{{ $year->year }}</td>
+                                    <td class="text-center">{{$semester->semester }}</td>
                                     <td>
                                         <div class="d-flex justify-content-center">
-                                            <a href="{{ route('group.viewEditYear', $year->id) }}"
+                                            <a href="{{ route('group.viewEditYear',$semester->id) }}"
                                                 class="btn btn-warning"><i class='bx bxs-message-edit'></i> Edit</a> ||
                                             <form onsubmit="return confirm('Data pengguna akan dihapus ?')"
-                                                action="{{ route('group.deletey', $year->id) }}" method="POST">
+                                                action="{{ route('group.deletey',$semester->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type=" submit" class="btn btn-danger"><i class='bx bxs-trash'></i>

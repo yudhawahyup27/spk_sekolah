@@ -24,7 +24,7 @@
                             <th class="text-center">Nama</th>
                             <th class="text-center">Jenis Kelamin</th>
                             <th class="text-center">Kelas</th>
-                            <th class="text-center">Angkatan</th>
+                            <th class="text-center">Semester</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -35,8 +35,9 @@
                                 <td class="text-center">{{ $student->code }}</td>
                                 <td class="text-center">{{ $student->name }}</td>
                                 <td class="text-center">{{ $student->gender }}</td>
-                                <td class="text-center">{{ $student->grade->grade }}</td>
-                                <td class="text-center">{{ $student->year->year }}</td>
+                                <td class="text-center">{{ $student->grade }}</td>
+                                <td class="text-center">{{ $student->semester  }}</td> <!-- Assuming 'year' represents semester -->
+                            </tr>
                                 <td>
                                     <div class="d-flex justify-content-center">
                                         <a href="{{ route('student.viewEdit', $student->id) }}" class="btn btn-warning"><i
@@ -56,7 +57,7 @@
                 </table>
             </div>
         </div>
-        
+
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">

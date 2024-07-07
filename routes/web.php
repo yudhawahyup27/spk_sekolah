@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/student/edit-student/{student}', 'viewEdit')->name('viewEdit');
             Route::patch('/student/edit-student/{student}', 'edit')->name('edit');
             Route::delete('/student/{student}', 'delete')->name('delete');
-  
+
             // Route::get('/students/import', [StudentController::class, 'viewImport'])->name('students.import');
             Route::post('/students/import', [StudentController::class, 'importStudent'])->name('students.import.post');
 
@@ -57,7 +57,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/group/edit-grade/{grade}', 'viewEditGrade')->name('viewEditGrade');
             Route::patch('/group/edit-grade/{grade}', 'editG')->name('editG');
             Route::delete('/group/{grade}', 'deleteG')->name('deleteG');
-            // CRUD Angkatan
+            // CRUD Semester
             Route::get('/group/add-year', 'viewAddYear')->name('viewAddYear');
             Route::post('/group/addY', 'addY')->name('addY');
             Route::get('/group/edit-year/{year}', 'viewEditYear')->name('viewEditYear');
@@ -93,7 +93,8 @@ use Illuminate\Support\Facades\Route;
             Route::delete('/kalkulasi/hasil/{hasil}', 'delete')->name('delete');
             Route::post('/kalkulasi/proses', 'calculate')->name('process');
         });
-    
+
+        Route::delete('/delete-tb-hasil', [ResultController::class, 'deleteTbHasil'])->name('delete.tb_hasil');
     });
 
 

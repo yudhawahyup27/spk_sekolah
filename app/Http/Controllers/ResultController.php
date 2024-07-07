@@ -14,6 +14,7 @@ class ResultController extends Controller
 {
     public function calculateView(Request $request)
     {
+
         $kelas = Auth::user()->grade_id;
         $isCalculate = false;
 
@@ -34,11 +35,11 @@ class ResultController extends Controller
                 ->orderBy('candidates.id', 'asc')->orderBy('sub_criteria.criteria_id')
                 ->get();
         }
-        
 
+  $semester = DB::table('semester')->get();
         $dataToCalculate = $dataToCalculate->groupBy('candidate_id');
 
-        return view('calculates.calculate', compact('dataToCalculate', 'isCalculate'));
+        return view('calculates.calculate', compact('dataToCalculate', 'isCalculate', 'semester'));
     }
 
     public function calculate(Request $request)
@@ -246,12 +247,26 @@ class ResultController extends Controller
             $resultData = $resultData->groupBy('id_hasil');
         }
 
-        return view('calculates.calculate-result', compact('resultData'));
+       $semester = DB::table('semester')->get();
+
+        return view('calculates.calculate-result', compact('resultData', 'semester'));
     }
 
     public function delete(hasil $hasil){
         $hasil->delete();
         return redirect()->route('calculate.resultView');
     }
+    public function deleteTbHasil(Request $request)
+{
+   $semesterId = $request->input('year_id');
+
+    $students = DB::table('students')->where('year_id',$semesterId)->pluck('id');
+
+    $candidates = DB::table('candidates')->whereIn('student_id', $students)->pluck('id');
+
+    DB::table('hasil')->whereIn('candidates_id', $candidates)->delete();
+
+    return back()->with('success', 'Records deleted successfully');
+}
 }
 

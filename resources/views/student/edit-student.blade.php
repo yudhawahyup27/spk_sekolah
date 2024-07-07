@@ -42,11 +42,11 @@
                         </select>
                     </div>
                     <div class="col-lg-12 col-12 mb-2">
-                        <label class="form-label">Angkatan <sup class="text-danger">*</sup></label>
+                        <label class="form-label">Semester <sup class="text-danger">*</sup></label>
                         <select name="year_id" class="form-select" id="inputGroupSelect01">
                             <option selected>Choose...</option>
-                            @foreach ($yearData as $year)
-                                <option value="{{ $year->id }}"@if($year->id == $student->year_id) selected @endif>{{ $year->year }} </option>
+                            @foreach ($semester as $semester)
+                                <option value="{{$semester->id }}"@if($semester->id == $student->year_id) selected @endif>{{$semester->semester }} </option>
                             @endforeach
                         </select>
                     </div>

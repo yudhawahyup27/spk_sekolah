@@ -3,68 +3,85 @@
 namespace App\Http\Controllers;
 
 use App\Models\Grade;
-use App\Models\Year;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller
 {
-    public function view(Grade $grade, Year $year)
+    // View all grades and semesters
+    public function view()
     {
-        $gradeData = $grade->get();
-        $yearData = $year->get();
-        return view('group.groupView', compact('gradeData', 'yearData'));
+        $gradeData = DB::table('grades')->get();
+        $semester = DB::table('semester')->get();
+        return view('group.groupView', compact('gradeData', 'semester'));
     }
+
+    // View form to add a new grade
     public function viewAddGrade()
     {
         return view('group.grade.add-grade');
     }
-    public function addG(Grade $grade, Request $gradeRequest)
+
+    // Add a new grade
+    public function addGrade(Request $request)
     {
-        $data = $gradeRequest->all();
-        $grade->create($data);
+        DB::table('grades')->insert($request->only(['name', 'description'])); // Adjust columns as needed
         return redirect(route('group.view'))->with('success', 'Data kelas berhasil ditambahkan');
     }
-    public function viewEditGrade(Grade $grade)
-    {
 
+    // View form to edit an existing grade
+    public function viewEditGrade($id)
+    {
+        $grade = DB::table('grades')->where('id', $id)->first();
         return view('group.grade.edit-grade', compact('grade'));
     }
-    public function editG(Grade $grade, Request $Request)
+
+    // Edit an existing grade
+    public function editGrade(Request $request, $id)
     {
-        $data = $Request->all();
-        $grade->update($data);
+        DB::table('grades')->where('id', $id)->update($request->only(['name', 'description'])); // Adjust columns as needed
         return redirect(route('group.view'))->with('success', 'Data kelas berhasil diubah');
     }
-    public function deleteG(Grade $grade)
+
+    // Delete an existing grade
+    public function deleteGrade($id)
     {
-        $grade->delete();
+        DB::table('grades')->where('id', $id)->delete();
         return redirect(route('group.view'))->with('success', 'Data kelas berhasil dihapus');
     }
+
+    // View form to add a new semester
     public function viewAddYear()
     {
         return view('group.year.add-year');
     }
-    public function addY(Year $year, Request $yearRequest)
-    {
-        $data = $yearRequest->all();
-        $year->create($data);
-        return redirect(route('group.view'))->with('success', 'Data kelas berhasil ditambahkan');
-    }
-    public function viewEditYear(Year $year)
-    {
 
-        return view('group.year.edit-year', compact('year'));
-    }
-    public function editY(Year $year, Request $Request)
+    // Add a new semester
+    public function addY(Request $request)
     {
-        $data = $Request->all();
-        $year->update($data);
-        return redirect(route('group.view'))->with('success', 'Data kelas berhasil diubah');
-    }
-    public function deletey(Year $year)
-    {
+        DB::table('semester')->insert(['semester' => $request->semester]);
 
-        $year->delete();
-        return redirect(route('group.view'))->with('success', 'Data Angkatan berhasil dihapus');
+        return redirect(route('group.view'))->with('success', 'Data semester berhasil ditambahkan');
+    }
+
+    // View form to edit an existing semester
+    public function viewEditYear($id)
+    {
+        $semester = DB::table('semester')->where('id', $id)->first();
+        return view('group.year.edit-year', compact('semester'));
+    }
+
+    // Edit an existing semester
+    public function editY(Request $request, $id)
+    {
+        DB::table('semester')->where('id', $id)->update($request->only(['semester', 'description'])); // Adjust columns as needed
+        return redirect(route('group.view'))->with('success', 'Data semester berhasil diubah');
+    }
+
+    // Delete an existing semester
+    public function deletey($id)
+    {
+        DB::table('semester')->where('id', $id)->delete();
+        return redirect(route('group.view'))->with('success', 'Data semester berhasil dihapus');
     }
 }
