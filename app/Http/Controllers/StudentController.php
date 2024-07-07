@@ -15,16 +15,16 @@ class StudentController extends Controller
         return view('student.import');
     }
 
-    public function import(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
-        ]);
+    // public function import(Request $request)
+    // {
+    //     $request->validate([
+    //         'file' => 'required|mimes:xlsx,xls,csv',
+    //     ]);
 
-        Excel::import(new StudentsImport, $request->file('file'));
+    //     Excel::import(new StudentsImport, $request->file('file'));
 
-        return redirect(route('student.view'))->with('success', 'Data berhasil diimpor');
-    }
+    //     return redirect(route('student.view'))->with('success', 'Data berhasil diimpor');
+    // }
 
     public function view(Student $student)
     {
@@ -74,9 +74,34 @@ class StudentController extends Controller
         $student->update($validatedData);
         return redirect(route('student.view'))->with('success', 'Data user berhasil diubah');
     }
-    public function delete(Student $student,)
+    public function delete(Student $student)
     {
         $student->delete();
         return redirect(route('student.view'))->with('success', 'Data user berhasil diubah');
+    }
+    public function importStudent(Request $request){
+
+        $request->validate([
+            'user_excel' => 'required|mimes:xls,xlsx',
+        ]);
+
+        $file = $request->file('user_excel');
+
+        $data = Excel::toArray([], $file);
+        
+        // Mengambil sheet pertama
+        $rows = $data[0];
+
+        // Menampilkan hasil
+        echo '<pre>';
+        var_dump($rows);
+        echo '</pre>';
+
+        // foreach ($excel_data as $key => $value) {
+        //     echo '<pre>';
+        //     print_r($value);
+        //     echo '</pre>';
+        // }
+
     }
 }

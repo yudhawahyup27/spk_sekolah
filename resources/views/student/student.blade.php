@@ -6,7 +6,7 @@
             <h1 class="h3 mb-0 text-gray-800">Data Siswa</h1>
         </div>
 
-        <div class="w-100 d-flex justify-content-lg-end justify-content-center mb-3">
+        <div class="w-100 d-flex justify-content-lg-end justify-content-center mb-3 gap-2">
             <a href="{{ route('student.viewAdd') }}" class="btn btn-primary px-5"> <i
                     class='bx bx-plus-medical pe-2'></i>Tambah</a>
         </div>
@@ -55,6 +55,28 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Import Data Siswa</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form enctype="multipart/form-data" action="{{ route('student.students.import.post') }}" method="POST">
+                <div class="modal-body">
+                    @csrf
+                    <input type="file" name="user_excel" class="form-control" accept=".xls, .xlsx">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Import Data</button>
+                </div>
+            </form>
+            </div>
+        </div>
         </div>
     </div>
 @endsection

@@ -56,7 +56,6 @@
                         <div class="form-group">
                             <select class="form-control" id="calculate_type" name="calculate_type">
                                 <option value="1">SAW</option>
-                                <option value="2">SMART</option>
                             </select>
                         </div>
                     </div>

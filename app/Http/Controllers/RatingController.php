@@ -16,10 +16,11 @@ class RatingController extends Controller
     public function view()
     {   
         $kelas = Auth::user()->grade_id;
-        $studentData=Student::get();
+        $studentData=Student::with('candidate')->whereDoesntHave('candidate')->get();
+        // dd($studentData);
         $candidateData = Candidate::with('rating.subCriteria')->get();
         if (Auth::user()->role !== 1){
-            $studentData=Student::where('grade_id', $kelas)->get();
+            $studentData=Student::where('grade_id', $kelas)->with('candidate')->whereDoesntHave('candidate')->get();
             $candidateData = Candidate::with(['rating.subCriteria', 'student'])
                             ->whereHas('student', function($query) use ($kelas) {
                                 $query->where('grade_id', $kelas);
@@ -37,7 +38,8 @@ class RatingController extends Controller
 
          // create candidate
         $data = [
-            'student_id' => $request->student_id
+            'student_id' => $request->student_id,
+            'nilai_akademik' => $request->criteria_c1
         ];
 
         $imagePath = null; // Inisialisasi $imagePath dengan nilai null
@@ -81,32 +83,57 @@ class RatingController extends Controller
         $rating->insert($ratingData);
         return redirect()->route('rating.view');
     }
-    public function edit(Rating $rating,Candidate $candidate ,Request $request){
+    public function edit(Candidate $candidate, SubCriteria $subCriteria, Rating $rating,Request $request){
 
         $data = [
-            'student_id' => $request->student_id
-          ];
+            'nilai_akademik' => $request->criteria_c1
+        ];
 
-          $candidateID = $candidate->id;
+        $imagePath = $candidate->gambar_kriteria; // Inisialisasi $imagePath dengan nilai null
+        if ($request->hasFile('gambar_kriteria_prestasi')) {
+            $file = $request->file('gambar_kriteria_prestasi');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            
+            $file->move(public_path('images'), $fileName);
+            $imagePath = 'images/' . $fileName; // Simpan path relatif
+        }
+        $data['gambar_kriteria'] = $imagePath;
 
-          $candidate->update($data);
+        $candidate->update($data);
 
-          $rating->where('candidate_id', $candidateID)->delete();
+        $nilaiAkademik = floatval($request->criteria_c1);
+        $nilaiAkademikHuruf = '';
+        if ($nilaiAkademik > 90) {
+            $nilaiAkademikHuruf = 'A';
+        } elseif ($nilaiAkademik > 75 && $nilaiAkademik <= 90) {
+            $nilaiAkademikHuruf = 'B';
+        } elseif ($nilaiAkademik >= 60 && $nilaiAkademik <= 75) {
+            $nilaiAkademikHuruf = 'C';
+        } else {
+            $nilaiAkademikHuruf = 'D';
+        }
 
-          // recreate rating data
-          // create rating
-          $ratingData = collect($request->sub_criteria_id)->map(function($item) use ($candidateID) {
-              return [
-                  'sub_criteria_id' => $item,
-                  'candidate_id' => $candidateID
-              ];
-          })->toArray();
+        $subCriteriaResult = $subCriteria->where('name', $nilaiAkademikHuruf)->where('criteria_id', 1)->first();
+        // create rating
+        $ratingData = collect($request->sub_criteria_id)->map(function($item) use ($candidate) {
+            return [
+                'sub_criteria_id' => $item,
+                'candidate_id' => $candidate->id
+            ];
+        })->toArray();
 
-          $rating->insert($ratingData);
+        array_push($ratingData, [
+            'sub_criteria_id' => $subCriteriaResult->id,
+            'candidate_id' => $candidate->id
+        ]);
+
+        $rating->where('candidate_id', $candidate->id)->delete();
+
+        $rating->insert($ratingData);
 
         return redirect()->route('rating.view');
     }
-    public function delete(Candidate $candidate, Request $request){
+    public function delete(Candidate $candidate){
         $candidate->delete();
         return redirect()->route('rating.view');
     }

@@ -220,5 +220,38 @@ class ResultController extends Controller
 
         hasil::insert($resultInsertData);
     }
+
+    public function resultView(Request $request){
+
+        $kelas = Auth::user()->grade_id;
+        $resultData = DB::table('hasil')
+            ->join('candidates', 'hasil.candidates_id', '=', 'candidates.id')
+            ->join('ratings', 'ratings.candidate_id', '=', 'candidates.id')
+            ->join('sub_criteria', 'ratings.sub_criteria_id', '=', 'sub_criteria.id')
+            ->join('students', 'candidates.student_id', '=', 'students.id')
+            ->select('hasil.*' , 'hasil.id as id_hasil','ratings.*', 'candidates.*', 'sub_criteria.*', 'sub_criteria.name as criteria_name', 'students.*')
+            ->orderBy('candidates.id', 'asc')->orderBy('sub_criteria.criteria_id')
+            ->get();
+        $resultData = $resultData->groupBy('id_hasil');
+        if (Auth::user()->role !== 1){
+            $resultData = DB::table('hasil')
+                ->join('candidates', 'hasil.candidates_id', '=', 'candidates.id')
+                ->join('ratings', 'ratings.candidate_id', '=', 'candidates.id')
+                ->join('sub_criteria', 'ratings.sub_criteria_id', '=', 'sub_criteria.id')
+                ->join('students', 'candidates.student_id', '=', 'students.id')
+                ->select('hasil.*' , 'hasil.id as id_hasil','ratings.*', 'candidates.*', 'sub_criteria.*', 'sub_criteria.name as criteria_name', 'students.*')
+                ->where('students.grade_id', $kelas)
+                ->orderBy('candidates.id', 'asc')->orderBy('sub_criteria.criteria_id')
+                ->get();
+            $resultData = $resultData->groupBy('id_hasil');
+        }
+
+        return view('calculates.calculate-result', compact('resultData'));
+    }
+
+    public function delete(hasil $hasil){
+        $hasil->delete();
+        return redirect()->route('calculate.resultView');
+    }
 }
 

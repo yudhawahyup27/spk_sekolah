@@ -105,7 +105,6 @@
             </div>
         </div>
     </div>
-
 {{-- edit candidate modal --}}
 @foreach($candidateData as $candidate)
 <div class="modal fade" id="editDataRating{{ $candidate->id }}Modal" tabindex="-1" role="dialog" aria-labelledby="addRatingModal" aria-hidden="true">
@@ -118,29 +117,40 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="{{route('rating.edit', $candidate->id)}}" method="POST">
+                <form action="{{route('rating.edit', $candidate->id)}}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
                     <div class="col-lg-12 col-12 mb-2">
                         <label class="form-label">Nama <sup class="text-danger">*</sup></label>
-                        <select name="student_id" class="form-select" id="inputGroupSelect01">
-                            <option selected>Choose...</option>
-                            @foreach ($studentData as $student)
-                                <option value="{{ $student->id }}">{{ $student->name }}</option>
-                            @endforeach
-                        </select>
+                        <input type="text" class="form-control" value="{{ $candidate->student['name'] }}" readonly>
                     </div>
                     @foreach($criteriaData as $criteria)
+                        <div class="form-group mb-3">
+                            @if ($criteria->code === 'C1')
+                            <label for="criteria_c1" class="form-label">{{ $criteria->name }} ({{$criteria->code}})<sup class="text-warning">*</sup></label>
+                            <input type="number" id="criteria_c1" name="criteria_c1" class="form-control" value="{{ $candidate->nilai_akademik }}" max="100" step="0.1" required>
+                            @else
+                            <label for="sub_criteria_id" class="form-label">{{ $criteria->name }} ({{$criteria->code}})<sup class="text-warning">*</sup></label>
+                            <select name="sub_criteria_id[]" id="sub_criteria_id" class="form-control" required>
+                                <option value="">--- pilih sub kriteria ---</option>
+                                @foreach($criteria->subCriteria as $subCriteria)
+                                    <option value="{{ $subCriteria->id }}"
+                                        @foreach($candidate->rating as $cr)
+                                            @if($cr['sub_criteria_id'] == $subCriteria->id)
+                                                selected
+                                            @endif
+                                        @endforeach
+                                    >{{ $subCriteria->name }}</option>
+                                @endforeach
+                            </select>
+                            @endif
+                        </div>
+                    @endforeach
                     <div class="form-group mb-3">
-                        <label for="sub_criteria_id" class="form-label">{{ $criteria->name }} ({{$criteria->code}})<sup class="text-warning">*</sup></label>
-                        <select name="sub_criteria_id[]" id="sub_criteria_id" class="form-control" required>
-                            <option value="">--- pilih sub kriteria ---</option>
-                            @foreach($criteria->subCriteria as $subCriteria)
-                                <option value="{{ $subCriteria->id }}">{{ $subCriteria->name }}</option>
-                            @endforeach
-                        </select>
+                        <label for="formFile" class="form-label">Gambar Kriteria Prestasi</label>
+                        <input class="form-control" type="file" id="formFile" name="gambar_kriteria_prestasi" accept=".img, .jpg, .png">
+                        <small>Accept : .img, .jpg, .png (Kosongi jika tidak ingin merubah)</small>
                     </div>
-                @endforeach
                     <button type="submit" class="btn btn-primary w-100">Edit Data Kriteria</button>
                 </form>
             </div>
@@ -148,7 +158,6 @@
     </div>
 </div>
 @endforeach
-
 @endsection
 @section('custom-js')
     <script>

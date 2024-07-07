@@ -96,12 +96,20 @@
                 </a>
             </li>
         @endif
-
+        
+        <li class="menu-item @if (Route::is('calculate.resultView') || Route::is('calculate.resultView')) active @endif">
+            <a href="{{ route('calculate.resultView') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-calculator"></i>
+                <div data-i18n="Analytics">Hasil Perhitungan</div>
+            </a>
+        </li>
+        
         <li class="menu-item @if (Route::is('calculate.view') || Route::is('calculate.calculate')) active @endif">
             <a href="{{ route('calculate.view') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bxs-calculator"></i>
                 <div data-i18n="Analytics">Perhitungan</div>
             </a>
         </li>
+        
     </ul>
 </aside>

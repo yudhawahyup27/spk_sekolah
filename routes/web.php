@@ -44,8 +44,8 @@ use Illuminate\Support\Facades\Route;
             Route::patch('/student/edit-student/{student}', 'edit')->name('edit');
             Route::delete('/student/{student}', 'delete')->name('delete');
   
-            Route::get('/students/import', [StudentController::class, 'viewImport'])->name('students.import');
-            Route::post('/students/import', [StudentController::class, 'import'])->name('students.import.post');
+            // Route::get('/students/import', [StudentController::class, 'viewImport'])->name('students.import');
+            Route::post('/students/import', [StudentController::class, 'importStudent'])->name('students.import.post');
 
         });
         Route::controller(GroupController::class)->name('group.')->group(function () {
@@ -84,11 +84,13 @@ use Illuminate\Support\Facades\Route;
         Route::controller(RatingController::class)->name('rating.')->group(function () {
             Route::get('/rating', 'view')->name('view');
             Route::post('/rating', 'add')->name('add');
-            Route::patch('/rating/edit/{rating}', 'edit')->name('edit');
-            Route::delete('/rating/delete/{rating}', 'delete')->name('delete');
+            Route::patch('/rating/edit/{candidate}', 'edit')->name('edit');
+            Route::delete('/rating/delete/{candidate}', 'delete')->name('delete');
         });
         Route::controller(ResultController::class)->name('calculate.')->group(function () {
             Route::get('/kalkulasi', 'calculateView')->name('view');
+            Route::get('/kalkulasi/hasil', 'resultView')->name('resultView');
+            Route::delete('/kalkulasi/hasil/{hasil}', 'delete')->name('delete');
             Route::post('/kalkulasi/proses', 'calculate')->name('process');
         });
     

@@ -19,6 +19,7 @@ return new class extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
             $table->string('gambar_kriteria')->nullable();
+            $table->float('nilai_akademik')->nullable();
             $table->timestamps();
         });
     }

@@ -9,7 +9,7 @@ class Candidate extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['student_id', 'gambar_kriteria'];
+    protected $fillable = ['student_id', 'nilai_akademik', 'gambar_kriteria'];
 
     public function student()
     {
