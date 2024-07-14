@@ -41,8 +41,8 @@
                     <tr>
                         <td class="text-center">{{ $dt[0]->candidate_id}}</td>
                         <td class="text-center">{{ $dt[0]->name}}</td>
-                        @foreach ($dt as $d)
-                            <td class="text-center">{{ $d->value }} ({{ $d->criteria_name }})</td>
+                        @foreach ($dt as $k => $d)
+                            <td class="text-center">{{ $k === 0 ? $d->nilai_akademik : $d->value }} ({{ $d->criteria_name }})</td>
                         @endforeach
                     </tr>
                 @endforeach

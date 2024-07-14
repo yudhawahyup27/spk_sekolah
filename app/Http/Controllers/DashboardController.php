@@ -25,9 +25,15 @@ class DashboardController extends Controller
     }
     public function add(Request $request, User $user)
     {
-        $data = $request->all();
-        $data['password'] = bcrypt($data['password']);
-        $user->create($data);
+        $validatedData = $request->validate([
+            'grade_id' => 'required|string|unique:users,grade_id',
+        ], [
+            'grade_id.required' => 'kelas wajib diisi.',
+            'grade_id.string' => 'kelas harus berupa teks.',
+            'grade_id.unique' => 'Guru kelas sudah ada, silakan pilih kelas lain.',
+        ]);
+        $validatedData['password'] = bcrypt($validatedData['password']);
+        $user->create($validatedData);
         return redirect(route('dashboard.view'))->with('success', 'Data user berhasil ditambahkan');
     }
     public function viewEdit(User $user, Grade $grade)

@@ -6,10 +6,12 @@
             <h1 class="h3 mb-0 text-gray-800">Data Siswa</h1>
         </div>
 
+        @if(Auth::user()->role == 1)
         <div class="w-100 d-flex justify-content-lg-end justify-content-center mb-3 gap-2">
             <a href="{{ route('student.viewAdd') }}" class="btn btn-primary px-5"> <i
                     class='bx bx-plus-medical pe-2'></i>Tambah</a>
         </div>
+        @endif
 
         <div class="card mb-5">
             <div class="card-header text-primary">
@@ -37,8 +39,8 @@
                                 <td class="text-center">{{ $student->gender }}</td>
                                 <td class="text-center">{{ $student->grade }}</td>
                                 <td class="text-center">{{ $student->semester  }}</td> <!-- Assuming 'year' represents semester -->
-                            </tr>
                                 <td>
+                                    @if (Auth::user()->role == 1)
                                     <div class="d-flex justify-content-center">
                                         <a href="{{ route('student.viewEdit', $student->id) }}" class="btn btn-warning"><i
                                                 class='bx bxs-message-edit'></i> Edit</a> ||
@@ -50,6 +52,7 @@
                                                 Hapus</button>
                                         </form>
                                     </div>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
