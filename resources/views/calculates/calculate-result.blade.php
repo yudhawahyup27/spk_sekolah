@@ -44,7 +44,7 @@
                         @foreach ($dt as $d)
                             <td class="text-center">{{ $d->value }} ({{ $d->criteria_name }})</td>
                         @endforeach
-                        <td class="text-center">{{ $dt[0]->score}}</td>
+                        <td class="text-center">{{ round($dt[0]->score, 1) }}</td>
                         <td>
                             <form onsubmit="return confirm('Apakah anda yakin?')" action="{{ route('calculate.delete', $dt[0]->id_hasil) }}" method="POST">
                                 @csrf

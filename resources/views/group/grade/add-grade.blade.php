@@ -14,6 +14,9 @@
                     <div class="col-lg-12 col-12 mb-2">
                         <label class="form-label">Kelas<sup class="text-danger">*</sup></label>
                         <input type="text" class="form-control desimal-input" name="grade"required>
+                        @error('grade')
+                            <div class="error">{{ $message }}</div>
+                        @enderror
                     </div>
                     <input type="hidden" name="grade-submit">
                     <button type="submit" name="grade-submit" class="btn btn-primary mt-2 mx-2 w-100">Tambah</button>

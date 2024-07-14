@@ -89,6 +89,12 @@
                 </a>
             </li>
         @else
+            <li class="menu-item @if (Route::is('student.view') || Route::is('student.viewAdd') || Route::is('student.viewEdit')) active @endif">
+                <a href="{{ route('student.view') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bxs-user-circle"></i>
+                    <div data-i18n="Analytics">Siswa</div>
+                </a>
+            </li>
             <li class="menu-item @if (Route::is('rating.view') || Route::is('rating.add') || Route::is('rating.edit')) active @endif">
                 <a href="{{ route('rating.view') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-task"></i>

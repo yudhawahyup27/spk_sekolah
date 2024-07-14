@@ -23,11 +23,29 @@ class GroupController extends Controller
     }
 
     // Add a new grade
-    public function addGrade(Request $request)
+    // public function addGrade(Request $request)
+    // {
+    //     DB::table('grades')->insert($request->only(['name', 'description'])); // Adjust columns as needed
+    //     return redirect(route('group.view'))->with('success', 'Data kelas berhasil ditambahkan');
+    // }
+    
+    public function addG(Request $request)
     {
-        DB::table('grades')->insert($request->only(['name', 'description'])); // Adjust columns as needed
+        // Validate the request with custom error messages
+        $request->validate([
+            'grade' => 'required|string|unique:grades,grade',
+        ], [
+            'grade.required' => 'Nama kelas wajib diisi.',
+            'grade.string' => 'Nama kelas harus berupa teks.',
+            'grade.unique' => 'Nama kelas sudah ada, silakan gunakan nama lain.',
+        ]);
+
+        // Insert the new grade if validation passes
+        DB::table('grades')->insert($request->only(['grade']));
+
         return redirect(route('group.view'))->with('success', 'Data kelas berhasil ditambahkan');
     }
+
 
     // View form to edit an existing grade
     public function viewEditGrade($id)

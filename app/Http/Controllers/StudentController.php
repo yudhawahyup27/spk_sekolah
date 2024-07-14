@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Grade;
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -17,12 +18,21 @@ class StudentController extends Controller
 
     public function view()
     {
+        $kelas = Auth::user()->grade_id;
         $semester = DB::table('semester')->get();  // Assuming 'years' table contains semester information
         $studentData = DB::table('students')
             ->join('grades', 'students.grade_id', '=', 'grades.id')
             ->join('semester', 'students.year_id', '=', 'semester.id')
             ->select('students.*', 'grades.grade', 'semester.semester')
             ->get();
+        if (Auth::user()->role !== 1){
+            $studentData = DB::table('students')
+                ->join('grades', 'students.grade_id', '=', 'grades.id')
+                ->join('semester', 'students.year_id', '=', 'semester.id')
+                ->select('students.*', 'grades.grade', 'semester.semester')
+                ->where('students.grade_id', $kelas)
+                ->get();
+        }
 
         return view('student.student', compact('studentData', 'semester'));
     }
