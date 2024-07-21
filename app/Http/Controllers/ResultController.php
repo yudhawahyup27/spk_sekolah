@@ -44,6 +44,8 @@ class ResultController extends Controller
 
     public function calculate(Request $request)
     {
+        $semester = DB::table('semester')->get();
+        $selected_semester = $request->input('semester');
         $kelas = Auth::user()->grade_id;
         $data = [
             'criteria' => Criteria::all(),
@@ -59,7 +61,7 @@ class ResultController extends Controller
 
         $isCalculate = true;
         $result = $this->calculateWithSAW($data);
-        $this->saveResults($result['ranking'], 1);
+        $this->saveResults($result['ranking'], 1, $selected_semester);
 
         $dataToCalculate = DB::table('ratings')
         ->join('candidates', 'ratings.candidate_id', '=', 'candidates.id')
@@ -80,7 +82,7 @@ class ResultController extends Controller
         }
         $dataToCalculate = $dataToCalculate->groupBy('candidate_id');
 
-        return view('calculates.calculate', compact('dataToCalculate','isCalculate', 'data', 'result'));
+        return view('calculates.calculate', compact('dataToCalculate','isCalculate', 'data', 'result', 'semester', 'selected_semester'));
     }
 
     private function calculateWithSAW($data)
@@ -159,7 +161,7 @@ class ResultController extends Controller
                     'name' => $item['name'],
                     'candidates_id' => $item['candidate_id'],
                     'rank' => $index + 1,
-                    'score' => $item['hasil_akhir']
+                    'score' => $item['hasil_akhir'],
                 ];
             })
         ];
@@ -234,16 +236,20 @@ class ResultController extends Controller
     //     ];
     // }
 
-    private function saveResults($results, $category)
+    private function saveResults($results, $category, $semester)
     {
-        hasil::where('category', $category)->delete();
+        hasil::where([
+            'category' => $category,
+            'semester' => $semester
+            ])->delete();
 
-        $resultInsertData = collect($results)->map(function ($item) use ($category) {
+        $resultInsertData = collect($results)->map(function ($item) use ($category, $semester) {
             return [
                 'candidates_id' => $item['candidates_id'],
                 'category' => $category,
                 'rank' => $item['rank'],
-                'score' => $item['score']
+                'score' => $item['score'],
+                'semester' => $semester
             ];
         })->toArray();
 
@@ -252,6 +258,8 @@ class ResultController extends Controller
 
     public function resultView(Request $request){
 
+        $semester = DB::table('semester')->get();
+        $selected_semester = $request->query('semester') ?? $semester->first()->id;
         $kelas = Auth::user()->grade_id;
         $resultData = DB::table('hasil')
             ->join('candidates', 'hasil.candidates_id', '=', 'candidates.id')
@@ -259,6 +267,7 @@ class ResultController extends Controller
             ->join('sub_criteria', 'ratings.sub_criteria_id', '=', 'sub_criteria.id')
             ->join('students', 'candidates.student_id', '=', 'students.id')
             ->select('hasil.*' , 'hasil.id as id_hasil','ratings.*', 'candidates.*', 'sub_criteria.*', 'sub_criteria.name as criteria_name', 'students.*')
+            ->where('hasil.semester', $selected_semester)
             ->orderBy('candidates.id', 'asc')->orderBy('sub_criteria.criteria_id')
             ->get();
         
@@ -270,14 +279,13 @@ class ResultController extends Controller
                 ->join('students', 'candidates.student_id', '=', 'students.id')
                 ->select('hasil.*' , 'hasil.id as id_hasil','ratings.*', 'candidates.*', 'sub_criteria.*', 'sub_criteria.name as criteria_name', 'students.*')
                 ->where('students.grade_id', $kelas)
+                ->where('hasil.semester', $selected_semester)
                 ->orderBy('candidates.id', 'asc')->orderBy('sub_criteria.criteria_id')
                 ->get();
         }
         $resultData = $resultData->sortByDesc('score')->groupBy('id_hasil');
 
-       $semester = DB::table('semester')->get();
-
-        return view('calculates.calculate-result', compact('resultData', 'semester'));
+        return view('calculates.calculate-result', compact('resultData', 'semester', 'selected_semester'));
     }
 
     public function delete(hasil $hasil){

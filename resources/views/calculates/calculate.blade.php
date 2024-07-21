@@ -8,10 +8,19 @@
         <form method="POST" action="{{ route('calculate.process') }}">
             @csrf
             <div class="row">
-                <div class="col-3">
-                    <div class="form-group">
+                <div class="col-6 d-flex gap-3">
+                    <div class="form-group col">
+                        <label for="calculate_type">Metode</label>
                         <select class="form-control" id="calculate_type" name="calculate_type">
                             <option value="1">SAW</option>
+                        </select>
+                    </div>
+                    <div class="form-group col">
+                        <label for="semester">Semester</label>
+                        <select class="form-control" id="semester" name="semester">
+                            @foreach($semester as $smt)
+                                <option value="{{ $smt->id }}" {{ isset($selected_semester) && $selected_semester == $smt->id ? 'selected' : '' }}>{{ $smt->semester }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>

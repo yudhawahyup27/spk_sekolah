@@ -10,11 +10,11 @@
             @method('DELETE')
             <div class="row mb-3">
                 <div class="col">
-                    <label for="filterYear" class="form-label">Select Year:</label>
-                    <select class="form-select" id="filterYear" name="year_id">
+                    <label for="filter-year" class="form-label">Select Year:</label>
+                    <select class="form-select" id="filter-year" name="year_id">
                         @foreach($semester as $sem)
-                        <option value="{{ $sem->id }}">{{ $sem->semester }}</option>
-                    @endforeach
+                            <option value="{{ $sem->id }}" {{ $selected_semester == $sem->id ? 'selected' : '' }}>{{ $sem->semester }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -79,6 +79,11 @@
 
             // Move pagination to the right
             $('#result_table_paginate').addClass('float-end');
+
+            $('#filter-year').on('change', function (e) {
+                let semester = $(this).find(':selected').val()
+                window.location.href = window.location.origin + window.location.pathname + `?semester=${semester}`
+            })
         });
     </script>
 @endsection
